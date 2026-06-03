@@ -13,17 +13,6 @@ A full-stack personal finance tracking app with multi-user support. Track income
 - **Multi-User Auth** — Register/login with JWT-based authentication
 - **Persistent Storage** — SQLite database with per-user data isolation
 
-## Demo Account
-
-A pre-loaded demo account is available in production. You can also seed it locally:
-
-| Credential | Value |
-|------------|-------|
-| Email | `demo@example.com` |
-| Password | `demo123` |
-
-The demo account includes 6 months of sample data (Jan–Jun 2026) — income entries, categorized expenses with installment tracking, and monthly balance records.
-
 ## Tech Stack
 
 | Layer | Stack |
@@ -49,17 +38,6 @@ cd server && npm install && cd ..
 # Start both frontend and backend
 npm run dev
 ```
-
-### Seed Sample Data (Optional)
-
-The demo account is automatically seeded on first start. To manually seed or reset:
-
-```bash
-# Delete old demo data, then re-seed
-npx tsx src/seed.ts
-```
-
-Run this from the `server/` directory. The demo account is `demo@example.com` / `demo123` with 6 months of realistic sample data.
 
 Frontend: http://localhost:5173  
 Backend API: http://localhost:3001
