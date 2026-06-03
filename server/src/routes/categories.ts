@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import db from '../db'
-import type { AuthRequest } from '../middleware/auth'
+import db from '../db.js'
+import type { AuthRequest } from '../middleware/auth.js'
 
 const VALID_KINDS = ['expense', 'income', 'balance']
 

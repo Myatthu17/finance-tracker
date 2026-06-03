@@ -8,6 +8,7 @@
     "dev:client": "vite",
     "dev:server": "npm run dev --prefix server",
     "build": "tsc && vite build",
+    "build:prod": "npm run build && npm run build --prefix server",
     "preview": "vite preview"
   },
   "devDependencies": {

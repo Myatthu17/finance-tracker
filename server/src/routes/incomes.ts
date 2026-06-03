@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { v4 as uuid } from 'uuid'
-import db from '../db'
-import type { AuthRequest } from '../middleware/auth'
+import db from '../db.js'
+import type { AuthRequest } from '../middleware/auth.js'
 
 const router = Router()
 
