@@ -38,8 +38,15 @@ export default function BudgetSummary() {
   const prevExpenseSum = prevExpenses.reduce((s, e) => s + e.amount, 0)
 
   const expectedBalance = prevBalance - prevExpenseSum + prevIncomeSum
-  const currentBalance = balance + totalIncome - totalExpenses
-  const hasBalanceThisMonth = monthBalances.length > 0
+
+  // Real current month (independent of month picker)
+  const realYear = now.getFullYear()
+  const realMonth = now.getMonth() + 1
+  const realIncomes = useMemo(() => filterByMonth(incomes, realYear, realMonth), [incomes, realYear, realMonth])
+  const realExpenses = useMemo(() => filterByMonth(expenses, realYear, realMonth), [expenses, realYear, realMonth])
+  const realBalances = useMemo(() => filterByMonthBalance(balances, realYear, realMonth), [balances, realYear, realMonth])
+  const runningBalance = realBalances.reduce((s, b) => s + b.wonAmount, 0) + realIncomes.reduce((s, i) => s + i.amount, 0) - realExpenses.reduce((s, e) => s + e.amount, 0)
+  const hasRunningBalance = realBalances.length > 0
 
   const percentSpent = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0
 
@@ -69,10 +76,10 @@ export default function BudgetSummary() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <StatCard
           label="Current Balance (running)"
-          value={hasBalanceThisMonth ? formatWon(currentBalance) : '₩0'}
-          subtitle={hasBalanceThisMonth ? undefined : 'Please make the balance check for this month'}
-          positive={currentBalance >= 0 && hasBalanceThisMonth}
-          negative={currentBalance < 0 && hasBalanceThisMonth}
+          value={hasRunningBalance ? formatWon(runningBalance) : '₩0'}
+          subtitle={hasRunningBalance ? undefined : 'Please make the balance check for this month'}
+          positive={runningBalance >= 0 && hasRunningBalance}
+          negative={runningBalance < 0 && hasRunningBalance}
         />
         <StatCard label="Net Monthly Income" value={formatWon(totalIncome)} positive />
         <StatCard label="Net Monthly Expenses" value={formatWon(totalExpenses)} negative />
