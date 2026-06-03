@@ -60,10 +60,12 @@ const DEMO_EMAIL = 'demo@example.com'
 const DEMO_USERNAME = 'demo'
 const DEMO_PASSWORD = 'demo123'
 
-// Remove existing demo user (cascade deletes all their data)
-db.prepare('DELETE FROM users WHERE email = ?').run(DEMO_EMAIL)
+const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(DEMO_EMAIL) as { id: string } | undefined
+if (existing) {
+  console.log('Demo account already exists — skipping seed.')
+  process.exit(0)
+}
 
-// Create demo user
 const userId = uuid()
 const hashed = bcrypt.hashSync(DEMO_PASSWORD, 10)
 db.prepare('INSERT INTO users (id, email, username, password) VALUES (?, ?, ?, ?)').run(userId, DEMO_EMAIL, DEMO_USERNAME, hashed)

@@ -52,11 +52,14 @@ npm run dev
 
 ### Seed Sample Data (Optional)
 
+The demo account is automatically seeded on first start. To manually seed or reset:
+
 ```bash
-npm run seed --prefix server
+# Delete old demo data, then re-seed
+npx tsx src/seed.ts
 ```
 
-Creates a demo account (`demo@example.com` / `demo123`) with 6 months of realistic sample data. Re-run anytime to reset.
+Run this from the `server/` directory. The demo account is `demo@example.com` / `demo123` with 6 months of realistic sample data.
 
 Frontend: http://localhost:5173  
 Backend API: http://localhost:3001
