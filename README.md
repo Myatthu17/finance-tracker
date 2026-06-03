@@ -1,12 +1,14 @@
 # 💰 Finance Tracker
 
 A full-stack personal finance tracking app with multi-user support. Track income, expenses, and balances with customizable categories, time-based filters, and a dashboard with charts.
+🚀 Live Demo: https://finance-tracker-017.up.railway.app/
 
 ## Features
 
 - **Dashboard** — Monthly overview with income vs expenses chart, category breakdowns, and balance health check
 - **Expenses & Income Logs** — Add, edit, delete entries with time filters (Month/Year/All) and category filter pills
 - **Balance Tracking** — Record monthly balances by type (Cash, Card, etc.) with running totals
+- **Installment Tracking** — Label expenses as installments (e.g. `"PC (1/6)"`) with highlighted rows and one-click `Next→` to auto-create next month's payment
 - **Custom Categories** — Create your own expense, income, and balance categories
 - **Multi-User Auth** — Register/login with JWT-based authentication
 - **Persistent Storage** — SQLite database with per-user data isolation
