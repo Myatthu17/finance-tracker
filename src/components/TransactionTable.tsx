@@ -81,7 +81,7 @@ export default function TransactionTable({ data, onEdit, onDelete, onNextInstall
                 ) : (
                   item.description || <span className="text-gray-300">—</span>
                 )}
-                {item.description && (
+                {item.installmentLabel && item.description && (
                   <span className="ml-1">{item.description !== item.installmentLabel ? item.description : ''}</span>
                 )}
               </td>
