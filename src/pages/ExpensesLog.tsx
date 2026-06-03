@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useFinance } from '../context/FinanceContext'
-import TransactionTable from '../components/TransactionTable'
+import TransactionTable, { advanceDate, incrementLabel } from '../components/TransactionTable'
 import TransactionForm from '../components/TransactionForm'
 import MonthYearPicker from '../components/MonthYearPicker'
 import Modal from '../components/Modal'
@@ -92,6 +92,17 @@ export default function ExpensesLog() {
         onDelete={(id) => {
           if (window.confirm('Delete this expense?')) deleteExpense(id)
         }}
+        onNextInstallment={(item) => {
+          const nextDate = advanceDate(item.date)
+          const nextLabel = incrementLabel(item.installmentLabel || '')
+          addExpense({
+            date: nextDate,
+            category: item.category,
+            description: item.description,
+            amount: item.amount,
+            installmentLabel: nextLabel,
+          })
+        }}
       />
 
       <Modal
@@ -108,17 +119,20 @@ export default function ExpensesLog() {
                   category: editing.category,
                   description: editing.description,
                   amount: String(editing.amount),
+                  installmentLabel: editing.installmentLabel,
                 }
               : undefined
           }
           categories={allCategories}
+          showInstallment
           onSubmit={(values) => {
-            const entry = {
+            const entry: any = {
               date: values.date,
               category: values.category,
               description: values.description,
               amount: Number(values.amount),
             }
+            if (values.installmentLabel) entry.installmentLabel = values.installmentLabel
             if (editing) {
               updateExpense(editing.id, entry)
             } else {

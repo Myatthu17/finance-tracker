@@ -5,6 +5,7 @@ interface FormValues {
   category: string
   description: string
   amount: string
+  installmentLabel?: string
 }
 
 interface TransactionFormProps {
@@ -12,6 +13,7 @@ interface TransactionFormProps {
   categories: string[]
   onSubmit: (values: FormValues) => void
   onCancel: () => void
+  showInstallment?: boolean
 }
 
 export default function TransactionForm({
@@ -19,16 +21,20 @@ export default function TransactionForm({
   categories,
   onSubmit,
   onCancel,
+  showInstallment,
 }: TransactionFormProps) {
   const [date, setDate] = useState(initial?.date ?? new Date().toISOString().slice(0, 10))
   const [category, setCategory] = useState(initial?.category ?? categories[0] ?? '')
   const [description, setDescription] = useState(initial?.description ?? '')
   const [amount, setAmount] = useState(initial?.amount ?? '')
+  const [installmentLabel, setInstallmentLabel] = useState(initial?.installmentLabel ?? '')
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!date || !category || !amount) return
-    onSubmit({ date, category, description, amount })
+    const values: FormValues = { date, category, description, amount }
+    if (installmentLabel) values.installmentLabel = installmentLabel
+    onSubmit(values)
   }
 
   return (
@@ -80,6 +86,20 @@ export default function TransactionForm({
           required
         />
       </div>
+      {showInstallment && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Installment label <span className="text-gray-400 font-normal">(optional)</span>
+          </label>
+          <input
+            type="text"
+            value={installmentLabel}
+            onChange={(e) => setInstallmentLabel(e.target.value)}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder='e.g. "PC (1/6)"'
+          />
+        </div>
+      )}
       <div className="flex justify-end gap-3 pt-2">
         <button
           type="button"

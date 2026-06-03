@@ -6,30 +6,30 @@ import type { AuthRequest } from '../middleware/auth.js'
 const router = Router()
 
 router.get('/', (req: AuthRequest, res) => {
-  const rows = db.prepare('SELECT * FROM expenses WHERE user_id = ? ORDER BY date DESC').all(req.userId)
-  res.json(rows)
+  const rows = db.prepare('SELECT * FROM expenses WHERE user_id = ? ORDER BY date DESC').all(req.userId) as any[]
+  res.json(rows.map(r => ({ ...r, installmentLabel: r.installment_label || undefined })))
 })
 
 router.post('/', (req: AuthRequest, res) => {
-  const { date, category, description, amount } = req.body
+  const { date, category, description, amount, installmentLabel } = req.body
   if (!date || !category || description === undefined || amount == null) {
     res.status(400).json({ error: 'date, category, description, and amount are required' })
     return
   }
   const id = uuid()
-  db.prepare('INSERT INTO expenses (id, user_id, date, category, description, amount) VALUES (?, ?, ?, ?, ?, ?)').run(id, req.userId, date, category, description, amount)
-  res.status(201).json({ id, date, category, description, amount })
+  db.prepare('INSERT INTO expenses (id, user_id, date, category, description, amount, installment_label) VALUES (?, ?, ?, ?, ?, ?, ?)').run(id, req.userId, date, category, description, amount, installmentLabel || null)
+  res.status(201).json({ id, date, category, description, amount, installmentLabel: installmentLabel || undefined })
 })
 
 router.put('/:id', (req: AuthRequest, res) => {
-  const { date, category, description, amount } = req.body
+  const { date, category, description, amount, installmentLabel } = req.body
   const existing = db.prepare('SELECT * FROM expenses WHERE id = ? AND user_id = ?').get(req.params.id, req.userId) as any
   if (!existing) {
     res.status(404).json({ error: 'Expense entry not found' })
     return
   }
-  db.prepare('UPDATE expenses SET date = ?, category = ?, description = ?, amount = ? WHERE id = ?').run(date, category, description, amount, req.params.id)
-  res.json({ id: req.params.id, date, category, description, amount })
+  db.prepare('UPDATE expenses SET date = ?, category = ?, description = ?, amount = ?, installment_label = ? WHERE id = ?').run(date, category, description, amount, installmentLabel || null, req.params.id)
+  res.json({ id: req.params.id, date, category, description, amount, installmentLabel: installmentLabel || undefined })
 })
 
 router.delete('/:id', (req: AuthRequest, res) => {

@@ -36,6 +36,7 @@ db.exec(`
     category TEXT NOT NULL,
     description TEXT NOT NULL,
     amount REAL NOT NULL,
+    installment_label TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   );
 
@@ -75,6 +76,16 @@ try {
         SELECT user_id, name, 'expense' FROM custom_categories_old;
       DROP TABLE custom_categories_old;
     `)
+  }
+} catch {
+  // table may not exist yet, ignore
+}
+
+// Migration: add installment_label column to expenses
+try {
+  const expColInfo = db.pragma('table_info(expenses)') as { name: string }[]
+  if (!expColInfo.some(c => c.name === 'installment_label')) {
+    db.exec('ALTER TABLE expenses ADD COLUMN installment_label TEXT')
   }
 } catch {
   // table may not exist yet, ignore

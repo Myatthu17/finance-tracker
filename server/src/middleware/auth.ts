@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
+import db from '../db.js'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'finance-tracker-secret-change-in-production'
 
@@ -17,6 +18,11 @@ export function authenticateToken(req: AuthRequest, res: Response, next: NextFun
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string }
+    const user = db.prepare('SELECT id FROM users WHERE id = ?').get(decoded.userId) as { id: string } | undefined
+    if (!user) {
+      res.status(401).json({ error: 'User not found' })
+      return
+    }
     req.userId = decoded.userId
     next()
   } catch {

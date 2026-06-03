@@ -33,6 +33,7 @@ export interface ExpenseEntry {
   category: string
   description: string
   amount: number
+  installmentLabel?: string
 }
 
 export interface BalanceEntry {
