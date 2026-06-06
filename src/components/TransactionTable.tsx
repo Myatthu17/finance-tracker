@@ -51,14 +51,14 @@ export default function TransactionTable({ data, onEdit, onDelete, onNextInstall
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm text-left">
+      <table className="w-full text-xs sm:text-sm text-left">
         <thead>
           <tr className="border-b border-gray-200 text-gray-500">
-            <th className="py-2 px-3 font-medium">Date</th>
-            <th className="py-2 px-3 font-medium">Category</th>
-            <th className="py-2 px-3 font-medium">Description</th>
-            <th className="py-2 px-3 font-medium text-right">Amount</th>
-            <th className="py-2 px-3 font-medium text-right">Actions</th>
+            <th className="py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">Date</th>
+            <th className="py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">Category</th>
+            <th className="py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">Description</th>
+            <th className="py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium text-right">Amount</th>
+            <th className="py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -69,30 +69,30 @@ export default function TransactionTable({ data, onEdit, onDelete, onNextInstall
                 item.installmentLabel ? 'bg-blue-50/50' : ''
               }`}
             >
-              <td className="py-2 px-3 text-gray-700">{item.date}</td>
-              <td className="py-2 px-3">
+              <td className="py-1.5 sm:py-2 px-1.5 sm:px-3 text-gray-700">{item.date}</td>
+              <td className="py-1.5 sm:py-2 px-1.5 sm:px-3">
                 <span className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded">
                   {item.category}
                 </span>
               </td>
-              <td className="py-2 px-3 text-gray-600 max-w-[200px] truncate">
+              <td className="py-1.5 sm:py-2 px-1.5 sm:px-3 text-gray-600 max-w-[120px] sm:max-w-[200px] truncate">
                 {item.installmentLabel ? (
                   <span className="text-blue-700 font-medium">{item.installmentLabel}</span>
                 ) : (
                   item.description || <span className="text-gray-300">—</span>
                 )}
                 {item.installmentLabel && item.description && (
-                  <span className="ml-1">{item.description !== item.installmentLabel ? item.description : ''}</span>
+                  <span className="ml-1 hidden sm:inline">{item.description !== item.installmentLabel ? item.description : ''}</span>
                 )}
               </td>
-              <td className="py-2 px-3 text-right font-mono text-gray-800">
+              <td className="py-1.5 sm:py-2 px-1.5 sm:px-3 text-right font-mono text-gray-800">
                 {formatWon(item.amount)}
               </td>
-              <td className="py-2 px-3 text-right whitespace-nowrap">
+              <td className="py-1.5 sm:py-2 px-1.5 sm:px-3 text-right whitespace-nowrap">
                 {item.installmentLabel && onNextInstallment && !isLastInstallment(item.installmentLabel) && (
                   <button
                     onClick={() => onNextInstallment(item)}
-                    className="text-green-600 hover:text-green-800 text-xs mr-2"
+                    className="text-green-600 hover:text-green-800 text-xs mr-1 sm:mr-2"
                     title="Create next installment"
                   >
                     Next→
@@ -100,7 +100,7 @@ export default function TransactionTable({ data, onEdit, onDelete, onNextInstall
                 )}
                 <button
                   onClick={() => onEdit(item)}
-                  className="text-blue-600 hover:text-blue-800 text-xs mr-2"
+                  className="text-blue-600 hover:text-blue-800 text-xs mr-1 sm:mr-2"
                 >
                   Edit
                 </button>

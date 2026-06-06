@@ -34,11 +34,11 @@ export default function IncomeLog() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <h1 className="text-xl font-bold text-gray-900">Income Log</h1>
         <button
           onClick={() => { setEditing(null); setModalOpen(true) }}
-          className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 shrink-0"
         >
           + Add Income
         </button>
@@ -63,20 +63,17 @@ export default function IncomeLog() {
         )}
       </div>
 
-      <div className="flex gap-2 flex-wrap">
-        {uniqueCategories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setCatFilter(cat)}
-            className={`px-3 py-1 text-xs rounded-full border transition-colors ${
-              catFilter === cat
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+      <div className="flex items-center gap-2">
+        <label className="text-xs text-gray-500 shrink-0">Category:</label>
+        <select
+          value={catFilter}
+          onChange={(e) => setCatFilter(e.target.value)}
+          className="border border-gray-300 rounded-md px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[180px] sm:max-w-none"
+        >
+          {uniqueCategories.map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
       </div>
 
       <div className="text-sm text-gray-600 font-medium">

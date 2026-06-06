@@ -20,22 +20,30 @@ export default function MonthYearPicker({ year, month, onChange }: MonthYearPick
     'July', 'August', 'September', 'October', 'November', 'December',
   ]
 
+  const shortMonths = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ]
+
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-1 sm:gap-4">
       <button
         onClick={prev}
-        className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+        className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-md hover:bg-gray-50"
       >
-        &larr; Previous
+        <span className="sm:hidden">&larr;</span>
+        <span className="hidden sm:inline">&larr; Previous</span>
       </button>
-      <span className="text-lg font-semibold text-gray-800 min-w-[180px] text-center">
-        {monthNames[month - 1]} {year}
+      <span className="text-sm sm:text-lg font-semibold text-gray-800 min-w-[100px] sm:min-w-[180px] text-center">
+        <span className="sm:hidden">{shortMonths[month - 1]} {year}</span>
+        <span className="hidden sm:inline">{monthNames[month - 1]} {year}</span>
       </span>
       <button
         onClick={next}
-        className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+        className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-md hover:bg-gray-50"
       >
-        Next &rarr;
+        <span className="sm:hidden">&rarr;</span>
+        <span className="hidden sm:inline">Next &rarr;</span>
       </button>
     </div>
   )

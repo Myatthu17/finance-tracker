@@ -31,11 +31,11 @@ export default function BalancePage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <h1 className="text-xl font-bold text-gray-900">Balance</h1>
         <button
           onClick={() => { setEditing(null); setModalOpen(true) }}
-          className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 shrink-0"
         >
           + Add Balance Entry
         </button>
@@ -68,34 +68,34 @@ export default function BalancePage() {
         <div className="text-center py-8 text-gray-400">No balance entries yet.</div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          <table className="w-full text-xs sm:text-sm text-left">
             <thead>
               <tr className="border-b border-gray-200 text-gray-500">
-                <th className="py-2 px-3 font-medium">Month</th>
-                <th className="py-2 px-3 font-medium">Type</th>
-                <th className="py-2 px-3 font-medium text-right">Amount</th>
-                <th className="py-2 px-3 font-medium text-right">Actions</th>
+                <th className="py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">Month</th>
+                <th className="py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">Type</th>
+                <th className="py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium text-right">Amount</th>
+                <th className="py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {sorted.map((item) => (
                 <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-2 px-3 text-gray-700">{item.month}</td>
-                  <td className="py-2 px-3">
+                  <td className="py-1.5 sm:py-2 px-1.5 sm:px-3 text-gray-700">{item.month}</td>
+                  <td className="py-1.5 sm:py-2 px-1.5 sm:px-3">
                     <span className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded">
                       {item.type}
                     </span>
                   </td>
-                  <td className="py-2 px-3 text-right font-mono text-gray-800">
+                  <td className="py-1.5 sm:py-2 px-1.5 sm:px-3 text-right font-mono text-gray-800">
                     {formatWon(item.wonAmount)}
                   </td>
-                  <td className="py-2 px-3 text-right">
+                  <td className="py-1.5 sm:py-2 px-1.5 sm:px-3 text-right whitespace-nowrap">
                     <button
                       onClick={() => {
                         setEditing(item)
                         setModalOpen(true)
                       }}
-                      className="text-blue-600 hover:text-blue-800 text-xs mr-2"
+                      className="text-blue-600 hover:text-blue-800 text-xs mr-1 sm:mr-2"
                     >
                       Edit
                     </button>
