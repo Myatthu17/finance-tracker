@@ -57,7 +57,7 @@ export default function TabBar() {
       </nav>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 sm:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 sm:hidden pb-[env(safe-area-inset-bottom)]">
         <div className="flex">
           {tabs.map((tab) => (
             <NavLink
