@@ -24,7 +24,8 @@ export default function TransactionForm({
   showInstallment,
 }: TransactionFormProps) {
   const [date, setDate] = useState(initial?.date ?? new Date().toISOString().slice(0, 10))
-  const [category, setCategory] = useState(initial?.category ?? categories[0] ?? '')
+  const defaultCategory = categories.includes('Food') ? 'Food' : (categories[0] ?? '')
+  const [category, setCategory] = useState(initial?.category ?? defaultCategory)
   const [description, setDescription] = useState(initial?.description ?? '')
   const [amount, setAmount] = useState(initial?.amount ?? '')
   const [installmentLabel, setInstallmentLabel] = useState(initial?.installmentLabel ?? '')

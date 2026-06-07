@@ -145,6 +145,7 @@ export default function BalancePage() {
             }
             setModalOpen(false)
             setEditing(null)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
           onCancel={() => { setModalOpen(false); setEditing(null) }}
         />
