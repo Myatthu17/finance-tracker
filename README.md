@@ -11,6 +11,7 @@ A full-stack personal finance tracking app with multi-user support. Track income
 - **Installment Tracking** — Label expenses as installments (e.g. `"PC (1/6)"`) with highlighted rows and one-click `Next→` to auto-create next month's payment
 - **Custom Categories** — Create your own expense, income, and balance categories
 - **Mobile Responsive** — Bottom navigation with icons, floating action button, compact month picker, responsive tables, and stacked layouts optimized for phone screens
+- **PWA Support** — Installable on mobile home screen with offline API caching via Workbox service worker
 - **Multi-User Auth** — Register/login with JWT-based authentication
 - **Persistent Storage** — SQLite database with per-user data isolation
 
