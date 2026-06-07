@@ -128,6 +128,13 @@ export default function IncomeLog() {
           onCancel={() => { setModalOpen(false); setEditing(null) }}
         />
       </Modal>
+
+      <button
+        onClick={() => { setEditing(null); setModalOpen(true) }}
+        className="fixed bottom-20 right-4 z-50 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-3xl hover:bg-blue-700 active:bg-blue-800 transition-colors sm:hidden"
+      >
+        +
+      </button>
     </div>
   )
 }

@@ -15,7 +15,7 @@ function AppLayout() {
     <FinanceProvider>
       <div className="min-h-screen bg-gray-50">
         <TabBar />
-        <main className="max-w-6xl mx-auto px-4 py-6">
+        <main className="max-w-6xl mx-auto px-4 py-6 pb-20 sm:pb-6">
           <Routes>
             <Route path="/" element={<BudgetSummary />} />
             <Route path="/expenses" element={<ExpensesLog />} />
