@@ -1,7 +1,6 @@
-import path from 'path'
-import { fileURLToPath } from 'url'
 import express from 'express'
 import cors from 'cors'
+import { initDb } from './db.js'
 import { authenticateToken } from './middleware/auth.js'
 import authRoutes from './routes/auth.js'
 import incomeRoutes from './routes/incomes.js'
@@ -21,15 +20,11 @@ app.use('/api/expenses', authenticateToken, expenseRoutes)
 app.use('/api/balances', authenticateToken, balanceRoutes)
 app.use('/api/categories', authenticateToken, categoryRoutes)
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../dist')))
-  app.get('/{*path}', (_req, res) => {
-    res.sendFile(path.join(__dirname, '../../dist/index.html'))
+async function main() {
+  await initDb()
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
   })
 }
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+main()

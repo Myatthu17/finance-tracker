@@ -5,40 +5,40 @@ import type { AuthRequest } from '../middleware/auth.js'
 
 const router = Router()
 
-router.get('/', (req: AuthRequest, res) => {
-  const rows = db.prepare('SELECT * FROM incomes WHERE user_id = ? ORDER BY date DESC').all(req.userId)
-  res.json(rows)
+router.get('/', async (req: AuthRequest, res) => {
+  const result = await db.execute({ sql: 'SELECT * FROM incomes WHERE user_id = ? ORDER BY date DESC', args: [req.userId as string] })
+  res.json(result.rows)
 })
 
-router.post('/', (req: AuthRequest, res) => {
+router.post('/', async (req: AuthRequest, res) => {
   const { date, category, description, amount } = req.body
   if (!date || !category || description === undefined || amount == null) {
     res.status(400).json({ error: 'date, category, description, and amount are required' })
     return
   }
   const id = uuid()
-  db.prepare('INSERT INTO incomes (id, user_id, date, category, description, amount) VALUES (?, ?, ?, ?, ?, ?)').run(id, req.userId, date, category, description, amount)
+  await db.execute({ sql: 'INSERT INTO incomes (id, user_id, date, category, description, amount) VALUES (?, ?, ?, ?, ?, ?)', args: [id, req.userId as string, date, category, description, amount] })
   res.status(201).json({ id, date, category, description, amount })
 })
 
-router.put('/:id', (req: AuthRequest, res) => {
+router.put('/:id', async (req: AuthRequest, res) => {
   const { date, category, description, amount } = req.body
-  const existing = db.prepare('SELECT * FROM incomes WHERE id = ? AND user_id = ?').get(req.params.id, req.userId) as any
-  if (!existing) {
+  const existingResult = await db.execute({ sql: 'SELECT * FROM incomes WHERE id = ? AND user_id = ?', args: [req.params.id as string, req.userId as string] })
+  if (existingResult.rows.length === 0) {
     res.status(404).json({ error: 'Income entry not found' })
     return
   }
-  db.prepare('UPDATE incomes SET date = ?, category = ?, description = ?, amount = ? WHERE id = ?').run(date, category, description, amount, req.params.id)
+  await db.execute({ sql: 'UPDATE incomes SET date = ?, category = ?, description = ?, amount = ? WHERE id = ?', args: [date, category, description, amount, req.params.id as string] })
   res.json({ id: req.params.id, date, category, description, amount })
 })
 
-router.delete('/:id', (req: AuthRequest, res) => {
-  const existing = db.prepare('SELECT * FROM incomes WHERE id = ? AND user_id = ?').get(req.params.id, req.userId)
-  if (!existing) {
+router.delete('/:id', async (req: AuthRequest, res) => {
+  const existingResult = await db.execute({ sql: 'SELECT * FROM incomes WHERE id = ? AND user_id = ?', args: [req.params.id as string, req.userId as string] })
+  if (existingResult.rows.length === 0) {
     res.status(404).json({ error: 'Income entry not found' })
     return
   }
-  db.prepare('DELETE FROM incomes WHERE id = ?').run(req.params.id)
+  await db.execute({ sql: 'DELETE FROM incomes WHERE id = ?', args: [req.params.id as string] })
   res.json({ success: true })
 })
 

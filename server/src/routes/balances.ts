@@ -5,40 +5,40 @@ import type { AuthRequest } from '../middleware/auth.js'
 
 const router = Router()
 
-router.get('/', (req: AuthRequest, res) => {
-  const rows = db.prepare('SELECT id, month, type, won_amount AS wonAmount FROM balances WHERE user_id = ? ORDER BY month DESC').all(req.userId)
-  res.json(rows)
+router.get('/', async (req: AuthRequest, res) => {
+  const result = await db.execute({ sql: 'SELECT id, month, type, won_amount AS wonAmount FROM balances WHERE user_id = ? ORDER BY month DESC', args: [req.userId as string] })
+  res.json(result.rows)
 })
 
-router.post('/', (req: AuthRequest, res) => {
+router.post('/', async (req: AuthRequest, res) => {
   const { month, type, wonAmount } = req.body
   if (!month || !type || wonAmount == null) {
     res.status(400).json({ error: 'month, type, and wonAmount are required' })
     return
   }
   const id = uuid()
-  db.prepare('INSERT INTO balances (id, user_id, month, type, won_amount) VALUES (?, ?, ?, ?, ?)').run(id, req.userId, month, type, wonAmount)
+  await db.execute({ sql: 'INSERT INTO balances (id, user_id, month, type, won_amount) VALUES (?, ?, ?, ?, ?)', args: [id, req.userId as string, month, type, wonAmount] })
   res.status(201).json({ id, month, type, wonAmount: wonAmount })
 })
 
-router.put('/:id', (req: AuthRequest, res) => {
+router.put('/:id', async (req: AuthRequest, res) => {
   const { month, type, wonAmount } = req.body
-  const existing = db.prepare('SELECT * FROM balances WHERE id = ? AND user_id = ?').get(req.params.id, req.userId) as any
-  if (!existing) {
+  const existingResult = await db.execute({ sql: 'SELECT * FROM balances WHERE id = ? AND user_id = ?', args: [req.params.id as string, req.userId as string] })
+  if (existingResult.rows.length === 0) {
     res.status(404).json({ error: 'Balance entry not found' })
     return
   }
-  db.prepare('UPDATE balances SET month = ?, type = ?, won_amount = ? WHERE id = ?').run(month, type, wonAmount, req.params.id)
+  await db.execute({ sql: 'UPDATE balances SET month = ?, type = ?, won_amount = ? WHERE id = ?', args: [month, type, wonAmount, req.params.id as string] })
   res.json({ id: req.params.id, month, type, wonAmount: wonAmount })
 })
 
-router.delete('/:id', (req: AuthRequest, res) => {
-  const existing = db.prepare('SELECT * FROM balances WHERE id = ? AND user_id = ?').get(req.params.id, req.userId)
-  if (!existing) {
+router.delete('/:id', async (req: AuthRequest, res) => {
+  const existingResult = await db.execute({ sql: 'SELECT * FROM balances WHERE id = ? AND user_id = ?', args: [req.params.id as string, req.userId as string] })
+  if (existingResult.rows.length === 0) {
     res.status(404).json({ error: 'Balance entry not found' })
     return
   }
-  db.prepare('DELETE FROM balances WHERE id = ?').run(req.params.id)
+  await db.execute({ sql: 'DELETE FROM balances WHERE id = ?', args: [req.params.id as string] })
   res.json({ success: true })
 })
 

@@ -20,8 +20,8 @@ A full-stack personal finance tracking app with multi-user support. Track income
 | Layer | Stack |
 |-------|-------|
 | Frontend | React 19, TypeScript 6, Vite 8, Tailwind CSS v4, Recharts |
-| Backend | Express 5, better-sqlite3, JWT (jsonwebtoken + bcryptjs) |
-| Deployment | Railway — auto-deploys from GitHub, persistent volume |
+| Backend | Express 5, Turso (libSQL via `@libsql/client`), JWT (jsonwebtoken + bcryptjs) |
+| Deployment | Vercel (frontend) + Render (API) + Turso (persistent DB) |
 
 ## Getting Started
 
@@ -97,11 +97,22 @@ Compiles the frontend (Vite) and server (tsc) into `dist/` and `server/dist/` re
 
 ## Deployment
 
-Deployed on Railway. Push to GitHub triggers auto-deploy.  
-Requires these environment variables:
+The frontend and backend deploy separately:
 
-| Variable | Description |
-|----------|-------------|
-| `NODE_ENV=production` | Enables static file serving |
-| `DB_PATH=/data/finance.db` | SQLite path on persistent volume |
-| `JWT_SECRET` | Secret for signing tokens |
+- **Frontend (Vercel)** — framework preset Vite, build command `npm run
+  build`, output directory `dist`. Push to GitHub triggers auto-deploy.
+- **Backend (Render)** — Web Service with root directory `server/`, build
+  command `npm install && npm run build`, start command `npm start`.
+- **Database (Turso)** — free hosted libSQL database; the server talks to it
+  via `@libsql/client`. Locally, no Turso account is needed — it falls back
+  to a local SQLite file (`file:./data.db`).
+
+Environment variables:
+
+| Variable | Where | Description |
+|----------|-------|-------------|
+| `NODE_ENV=production` | Render | Marks the API as running in production |
+| `JWT_SECRET` | Render | Secret for signing auth tokens |
+| `TURSO_DATABASE_URL` | Render | `libsql://...` URL of the Turso database |
+| `TURSO_AUTH_TOKEN` | Render | Auth token for the Turso database |
+| `VITE_API_URL` | Vercel | Full URL of the Render API, e.g. `https://<service>.onrender.com/api` |

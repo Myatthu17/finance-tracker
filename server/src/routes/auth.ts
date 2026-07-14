@@ -7,7 +7,7 @@ import { JWT_SECRET } from '../middleware/auth.js'
 
 const router = Router()
 
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
   const { email, username, password } = req.body
 
   if (!email || !username || !password) {
@@ -20,21 +20,21 @@ router.post('/register', (req, res) => {
     return
   }
 
-  const existing = db.prepare('SELECT id FROM users WHERE email = ? OR username = ?').get(email, username)
-  if (existing) {
+  const existingResult = await db.execute({ sql: 'SELECT id FROM users WHERE email = ? OR username = ?', args: [email, username] })
+  if (existingResult.rows.length > 0) {
     res.status(409).json({ error: 'Email or username already taken' })
     return
   }
 
   const id = uuid()
   const hashedPassword = bcrypt.hashSync(password, 10)
-  db.prepare('INSERT INTO users (id, email, username, password) VALUES (?, ?, ?, ?)').run(id, email, username, hashedPassword)
+  await db.execute({ sql: 'INSERT INTO users (id, email, username, password) VALUES (?, ?, ?, ?)', args: [id, email, username, hashedPassword] })
 
   const token = jwt.sign({ userId: id, email, username }, JWT_SECRET, { expiresIn: '7d' })
   res.status(201).json({ token, user: { id, email, username } })
 })
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const { email, password } = req.body
 
   if (!email || !password) {
@@ -42,7 +42,8 @@ router.post('/login', (req, res) => {
     return
   }
 
-  const user = db.prepare('SELECT id, email, username, password FROM users WHERE email = ?').get(email) as any
+  const result = await db.execute({ sql: 'SELECT id, email, username, password FROM users WHERE email = ?', args: [email] })
+  const user = result.rows[0] as any
   if (!user || !bcrypt.compareSync(password, user.password)) {
     res.status(401).json({ error: 'Invalid email or password' })
     return
