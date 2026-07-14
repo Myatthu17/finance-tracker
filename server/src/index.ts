@@ -21,6 +21,11 @@ app.use('/api/expenses', authenticateToken, expenseRoutes)
 app.use('/api/balances', authenticateToken, balanceRoutes)
 app.use('/api/categories', authenticateToken, categoryRoutes)
 
+app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error(err)
+  res.status(500).json({ error: 'Internal server error' })
+})
+
 async function main() {
   await initDb()
   app.listen(PORT, () => {
