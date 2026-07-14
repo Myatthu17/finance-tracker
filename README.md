@@ -102,7 +102,10 @@ The frontend and backend deploy separately:
 - **Frontend (Vercel)** — framework preset Vite, build command `npm run
   build`, output directory `dist`. Push to GitHub triggers auto-deploy.
 - **Backend (Render)** — Web Service with root directory `server/`, build
-  command `npm install && npm run build`, start command `npm start`.
+  command `npm install --include=dev && npm run build`, start command
+  `npm start`. The `--include=dev` is required because `NODE_ENV=production`
+  is set on the service, which otherwise makes `npm install` skip the
+  `devDependencies` (`typescript`, `@types/*`) that the build step needs.
 - **Database (Turso)** — free hosted libSQL database; the server talks to it
   via `@libsql/client`. Locally, no Turso account is needed — it falls back
   to a local SQLite file (`file:./data.db`).
