@@ -118,4 +118,6 @@ Environment variables:
 | `JWT_SECRET` | Render | Secret for signing auth tokens |
 | `TURSO_DATABASE_URL` | Render | `libsql://...` URL of the Turso database |
 | `TURSO_AUTH_TOKEN` | Render | Auth token for the Turso database |
+| `GOOGLE_CLIENT_ID` | Render | Google OAuth Client ID, used to verify Google sign-in tokens |
 | `VITE_API_URL` | Vercel | Full URL of the Render API, e.g. `https://<service>.onrender.com/api` |
+| `VITE_GOOGLE_CLIENT_ID` | Vercel | Google OAuth Client ID, used by the Google sign-in button |

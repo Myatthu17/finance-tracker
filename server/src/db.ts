@@ -78,6 +78,26 @@ export async function initDb() {
   if (!expColInfo.rows.some(c => (c as any).name === 'installment_label')) {
     await client.execute('ALTER TABLE expenses ADD COLUMN installment_label TEXT')
   }
+
+  // Migration: add google_id/auth_provider columns, make password nullable
+  const userColInfo = await client.execute('PRAGMA table_info(users)')
+  if (!userColInfo.rows.some(c => (c as any).name === 'google_id')) {
+    await client.executeMultiple(`
+      ALTER TABLE users RENAME TO users_old;
+      CREATE TABLE users (
+        id TEXT PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT,
+        google_id TEXT UNIQUE,
+        auth_provider TEXT NOT NULL DEFAULT 'password',
+        created_at TEXT DEFAULT (datetime('now'))
+      );
+      INSERT INTO users (id, email, username, password, created_at)
+        SELECT id, email, username, password, created_at FROM users_old;
+      DROP TABLE users_old;
+    `)
+  }
 }
 
 export default client
