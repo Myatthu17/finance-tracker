@@ -1,7 +1,7 @@
 # 💰 Finance Tracker
 
 A full-stack personal finance tracking app with multi-user support. Track income, expenses, and balances with customizable categories, time-based filters, and a dashboard with charts.
-🚀 Live Demo: https://finance-tracker-017.up.railway.app/
+🚀 Live Demo: https://finance-tracker-0017.vercel.app/
 
 ## Features
 
@@ -13,7 +13,7 @@ A full-stack personal finance tracking app with multi-user support. Track income
 - **Mobile Responsive** — Bottom navigation with icons, floating action button, compact month picker, responsive tables, and stacked layouts optimized for phone screens
 - **PWA Support** — Installable on mobile home screen with offline API caching via Workbox service worker
 - **Multi-User Auth** — Register/login with JWT-based authentication
-- **Persistent Storage** — SQLite database with per-user data isolation
+- **Persistent Storage** — Turso (libSQL) database with per-user data isolation
 
 ## Tech Stack
 
@@ -57,8 +57,8 @@ Compiles the frontend (Vite) and server (tsc) into `dist/` and `server/dist/` re
 ```
 ├── server/                 # Express API server
 │   ├── src/
-│   │   ├── index.ts        # Entry point, static serving in production
-│   │   ├── db.ts           # SQLite schema + migration
+│   │   ├── index.ts        # Entry point, route wiring
+│   │   ├── db.ts           # Turso/libSQL client, schema + migration
 │   │   ├── middleware/      # JWT auth middleware
 │   │   └── routes/          # Auth, incomes, expenses, balances, categories
 │   ├── package.json
