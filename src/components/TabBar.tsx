@@ -56,6 +56,26 @@ export default function TabBar() {
         </div>
       </nav>
 
+      {/* Mobile top bar */}
+      <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200 sm:hidden">
+        {user ? (
+          <>
+            <span className="text-sm text-gray-600">{user.username}</span>
+            <button
+              onClick={logout}
+              className="text-sm text-red-600 hover:text-red-800"
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" className="text-sm text-blue-600 hover:text-blue-800">Login</Link>
+            <Link to="/register" className="text-sm text-blue-600 hover:text-blue-800">Register</Link>
+          </>
+        )}
+      </div>
+
       {/* Mobile bottom nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 sm:hidden pb-[env(safe-area-inset-bottom)]">
         <div className="flex">
