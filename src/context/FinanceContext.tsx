@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useAuth } from './AuthContext'
 import { api } from '../lib/api'
 import { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES, DEFAULT_BALANCE_TYPES } from '../utils/defaults'
@@ -15,6 +15,9 @@ interface FinanceContextValue {
   allIncomeCategories: string[]
   allBalanceTypes: string[]
   loading: boolean
+  syncStatus: 'idle' | 'syncing' | 'error'
+  lastSyncedAt: number | null
+  syncNow: () => Promise<void>
 
   addIncome: (entry: Omit<IncomeEntry, 'id'>) => Promise<void>
   updateIncome: (id: string, entry: Omit<IncomeEntry, 'id'>) => Promise<void>
@@ -51,6 +54,42 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const [customIncomeCategories, setCustomIncomeCategories] = useState<string[]>([])
   const [customBalanceTypes, setCustomBalanceTypes] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'error'>('idle')
+  const [lastSyncedAt, setLastSyncedAt] = useState<number | null>(null)
+  const syncingRef = useRef(false)
+
+  // Identity only changes when `token` changes, so it's safe to depend on
+  // from the mount effect below without retriggering on every status flip.
+  const syncData = useCallback(async () => {
+    if (!token || syncingRef.current) return
+    syncingRef.current = true
+    setSyncStatus('syncing')
+    try {
+      const [inc, exp, bal, expCats, incCats, balTypes] = await Promise.all([
+        api<IncomeEntry[]>('/incomes'),
+        api<ExpenseEntry[]>('/expenses'),
+        api<BalanceEntry[]>('/balances'),
+        fetchCategories('expense'),
+        fetchCategories('income'),
+        fetchCategories('balance'),
+      ])
+      setIncomes(inc)
+      setExpenses(exp)
+      setBalances(bal)
+      setCustomCategories(expCats)
+      setCustomIncomeCategories(incCats)
+      setCustomBalanceTypes(balTypes)
+      setSyncStatus('idle')
+      setLastSyncedAt(Date.now())
+    } catch {
+      // Leave existing data on screen - a failed re-sync shouldn't blank out
+      // what's already loaded, only the initial load ever starts from empty.
+      setSyncStatus('error')
+    } finally {
+      setLoading(false)
+      syncingRef.current = false
+    }
+  }, [token])
 
   useEffect(() => {
     if (!token) {
@@ -60,37 +99,15 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       setCustomCategories([])
       setCustomIncomeCategories([])
       setCustomBalanceTypes([])
+      setSyncStatus('idle')
+      setLastSyncedAt(null)
       setLoading(false)
       return
     }
 
     setLoading(true)
-    Promise.all([
-      api<IncomeEntry[]>('/incomes'),
-      api<ExpenseEntry[]>('/expenses'),
-      api<BalanceEntry[]>('/balances'),
-      fetchCategories('expense'),
-      fetchCategories('income'),
-      fetchCategories('balance'),
-    ])
-      .then(([inc, exp, bal, expCats, incCats, balTypes]) => {
-        setIncomes(inc)
-        setExpenses(exp)
-        setBalances(bal)
-        setCustomCategories(expCats)
-        setCustomIncomeCategories(incCats)
-        setCustomBalanceTypes(balTypes)
-      })
-      .catch(() => {
-        setIncomes([])
-        setExpenses([])
-        setBalances([])
-        setCustomCategories([])
-        setCustomIncomeCategories([])
-        setCustomBalanceTypes([])
-      })
-      .finally(() => setLoading(false))
-  }, [token])
+    syncData()
+  }, [token, syncData])
 
   const allCategories = useMemo(
     () => [...DEFAULT_EXPENSE_CATEGORIES, ...customCategories],
@@ -231,6 +248,9 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         allIncomeCategories,
         allBalanceTypes,
         loading,
+        syncStatus,
+        lastSyncedAt,
+        syncNow: syncData,
         addIncome,
         updateIncome,
         deleteIncome,

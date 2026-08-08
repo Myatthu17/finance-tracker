@@ -1,5 +1,6 @@
 import { NavLink, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import SyncStatus from './SyncStatus'
 
 const tabs = [
   { to: '/', label: 'Summary', icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z' },
@@ -38,6 +39,7 @@ export default function TabBar() {
           <div className="ml-auto flex items-center gap-3 px-4">
             {user ? (
               <>
+                <SyncStatus />
                 <span className="text-sm text-gray-600">{user.username}</span>
                 <button
                   onClick={logout}
@@ -61,12 +63,15 @@ export default function TabBar() {
         {user ? (
           <>
             <span className="text-sm text-gray-600">{user.username}</span>
-            <button
-              onClick={logout}
-              className="text-sm text-red-600 hover:text-red-800"
-            >
-              Logout
-            </button>
+            <div className="flex items-center gap-3">
+              <SyncStatus />
+              <button
+                onClick={logout}
+                className="text-sm text-red-600 hover:text-red-800"
+              >
+                Logout
+              </button>
+            </div>
           </>
         ) : (
           <>

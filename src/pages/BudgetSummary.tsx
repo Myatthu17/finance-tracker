@@ -83,8 +83,12 @@ export default function BudgetSummary() {
         />
         <StatCard label="Net Monthly Income" value={formatWon(totalIncome)} positive />
         <StatCard label="Net Monthly Expenses" value={formatWon(totalExpenses)} negative />
-        <StatCard label="Balance" value={formatWon(balance)} positive />
-        <StatCard label="Last Month Balance" value={formatWon(prevBalance)} />
+        <StatCard label="Start Balance" value={formatWon(balance)} positive />
+        <StatCard
+          label="Expected Start Balance"
+          value={formatWon(expectedBalance)}
+          subtitle="= prev balance − prev expenses + prev income"
+        />
         <ProgressBar percent={percentSpent} />
       </div>
 
